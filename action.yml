@@ -33,9 +33,11 @@ runs:
         path: ${{ inputs.html_report_path }}
 
     - name: Install html2text
+      shell: bash
       run: pip install html2text
 
     - name: Convert HTML to Markdown using Python
+      shell: bash
       run: |
         python -c "
         import html2text
@@ -48,6 +50,7 @@ runs:
 
     - name: Add report to Summary
       if: always()
+      shell: bash
       run: |
         echo "### Dependency Check Report" >> $GITHUB_STEP_SUMMARY
         cat ${{ inputs.md_report_path }} >> $GITHUB_STEP_SUMMARY
