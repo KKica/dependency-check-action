@@ -1,0 +1,53 @@
+name: 'Dependency Check Action'
+description: 'A GitHub Action to perform a dependency check, convert report to Markdown, and add to summary'
+inputs:
+  project_name:
+    description: 'The name of the project file'
+    required: true
+  path:
+    description: 'The path to the project'
+    required: true
+    default: './'
+  html_report_path:
+    description: 'Path to the HTML report file'
+    required: true
+    default: 'reports/dependency-check-report.html'
+  md_report_path:
+    description: 'Path to the Markdown report file'
+    required: true
+    default: 'dependency-check-report.md'
+runs:
+  using: 'composite'
+  steps:
+    - name: Dependency Check
+      uses: dependency-check/Dependency-Check_Action@1.1.0
+      with:
+        project: ${{ inputs.project_name }}
+        path: ${{ inputs.path }}
+        format: 'HTML'
+
+    - name: Upload dependency check HTML report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dependency_check_report
+        path: ${{ inputs.html_report_path }}
+
+    - name: Install html2text
+      run: pip install html2text
+
+    - name: Convert HTML to Markdown using Python
+      run: |
+        python -c "
+        import html2text
+        with open('${{ inputs.html_report_path }}', 'r') as f:
+            html_content = f.read()
+        markdown_content = html2text.html2text(html_content)
+        with open('${{ inputs.md_report_path }}', 'w') as f:
+            f.write(markdown_content)
+        "
+
+    - name: Add report to Summary
+      if: always()
+      run: |
+        echo "### Dependency Check Report" >> $GITHUB_STEP_SUMMARY
+        cat ${{ inputs.md_report_path }} >> $GITHUB_STEP_SUMMARY
