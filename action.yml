@@ -1,4 +1,4 @@
-name: 'Dependency Check Action'
+name: 'Dependency check and publish support action'
 description: 'A GitHub Action to perform a dependency check, convert report to Markdown, and add to summary'
 inputs:
   project_name:
