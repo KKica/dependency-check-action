@@ -16,6 +16,10 @@ inputs:
     description: 'Path to the Markdown report file'
     required: true
     default: 'dependency-check-report.md'
+  add_report_to_summary:
+    description: 'Whether to add the report to the summary'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -33,10 +37,12 @@ runs:
         path: ${{ inputs.html_report_path }}
 
     - name: Install html2text
+      if: ${{ inputs.add_report_to_summary == 'true' }}
       shell: bash
       run: pip install html2text
 
     - name: Convert HTML to Markdown using Python
+      if: ${{ inputs.add_report_to_summary == 'true' }}
       shell: bash
       run: |
         python -c "
@@ -49,7 +55,7 @@ runs:
         "
 
     - name: Add report to Summary
-      if: always()
+      if: ${{ inputs.add_report_to_summary == 'true' }}
       shell: bash
       run: |
         echo "### Dependency Check Report" >> $GITHUB_STEP_SUMMARY
