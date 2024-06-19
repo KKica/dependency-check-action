@@ -14,7 +14,7 @@ This action performs a dependency check, converts the report to Markdown, and ad
 ## Example usage
 
 ```yaml
-uses: yourusername/dependency-check-action@v1
+uses: KKica/dependency-check-action@v0.1.0
 with:
   project_name: 'iPractice.Api.csproj'
   path: './iPractice.Api/'
